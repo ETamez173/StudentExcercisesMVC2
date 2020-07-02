@@ -191,7 +191,7 @@ namespace StudentExcercisesMVC2.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
                 return View();
             }
