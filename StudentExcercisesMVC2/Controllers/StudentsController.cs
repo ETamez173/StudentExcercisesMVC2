@@ -32,10 +32,10 @@ namespace StudentExcercisesMVC2.Controllers
         // GET: StudentsController
         public ActionResult Index()
         {
-            using(SqlConnection conn = Connection)
+            using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using(SqlCommand cmd = conn.CreateCommand())
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = "SELECT Id, FirstName, LastName, CohortId, SlackHandle FROM Student";
 
@@ -62,11 +62,142 @@ namespace StudentExcercisesMVC2.Controllers
 
             }
 
-            
+
         }
 
         // GET: StudentsController/Details/5
         public ActionResult Details(int id)
+        {
+            var student = GetStudentById(id);
+            return View(student);
+
+        }
+
+
+        // GET: StudentsController/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: StudentsController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(Student student)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"INSERT INTO Student (FirstName, LastName, SlackHandle, CohortId)
+                                            OUTPUT INSERTED.Id
+                                            VALUES (@firstName, @lastName, @slackHandle, @cohortId)";
+
+                        cmd.Parameters.Add(new SqlParameter("@firstName", student.FirstName));
+                        cmd.Parameters.Add(new SqlParameter("@lastName", student.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@slackHandle", student.SlackHandle));
+                        cmd.Parameters.Add(new SqlParameter("@cohortId", student.CohortId));
+
+                        var id = (int)cmd.ExecuteScalar();
+                        student.Id = id;
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+
+                return View();
+            }
+        }
+
+        // GET: StudentsController/Edit/5
+        public ActionResult Edit(int id)
+        {
+            var student = GetStudentById(id);
+            return View(student);
+        }
+
+        // POST: StudentsController/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, Student student)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE Student
+                                            SET FirstName = @firstName,
+                                                LastName = @lastName,
+                                                SlackHandle = @slackHandle,
+                                                CohortId = @cohortId
+                                            WHERE Id  = @id";
+
+                        cmd.Parameters.Add(new SqlParameter("@firstName", student.FirstName));
+                        cmd.Parameters.Add(new SqlParameter("@lastName", student.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@slackHandle", student.SlackHandle));
+                        cmd.Parameters.Add(new SqlParameter("@cohortId", student.CohortId));
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        var rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected < 1)
+                        {
+                            return NotFound();
+                        }
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        // GET: StudentsController/Delete/5
+        public ActionResult Delete(int id)
+        {
+            var student = GetStudentById(id);
+            return View(student);
+        }
+
+        // POST: StudentsController/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, Student student)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "DELETE FROM Student WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        private Student GetStudentById(int id)
         {
             using (SqlConnection conn = Connection)
             {
@@ -95,73 +226,8 @@ namespace StudentExcercisesMVC2.Controllers
 
                     }
                     reader.Close();
-                    return View(student);
+                    return student;
                 }
-            }
-
-        }
-
-
-        // GET: StudentsController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: StudentsController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: StudentsController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: StudentsController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: StudentsController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: StudentsController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
             }
         }
     }
