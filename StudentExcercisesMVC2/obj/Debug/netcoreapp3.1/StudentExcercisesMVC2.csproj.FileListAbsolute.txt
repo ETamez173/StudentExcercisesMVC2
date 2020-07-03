@@ -413,3 +413,4 @@ C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debu
 C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\Razor\Views\Students\Create.cshtml.g.cs
 C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\Razor\Views\Students\Edit.cshtml.g.cs
 C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\Razor\Views\Students\Delete.cshtml.g.cs
+C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\Razor\Views\Intructors\Index.cshtml.g.cs
