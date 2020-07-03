@@ -10,12 +10,12 @@ using StudentExcercisesMVC2.Models;
 
 namespace StudentExcercisesMVC2.Controllers
 {
-    public class IntructorsController : Controller
+    public class InstructorsController : Controller
     {
 
         private readonly IConfiguration _config;
 
-        public IntructorsController(IConfiguration config)
+        public InstructorsController(IConfiguration config)
         {
             _config = config;
         }
