@@ -70,7 +70,8 @@ namespace StudentExcercisesMVC2.Controllers
         // GET: InstructorsController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var instructor = GetInstructorById(id);
+            return View(instructor);
         }
 
         // GET: InstructorsController/Create
@@ -82,13 +83,34 @@ namespace StudentExcercisesMVC2.Controllers
         // POST: InstructorsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Instructor instructor)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"INSERT INTO Instructor (FirstName, LastName, SlackHandle, Specialty, CohortId)
+                                            OUTPUT INSERTED.Id
+                                            VALUES (@firstName, @lastName, @slackHandle, @specialty, @cohortId)";
+
+                        cmd.Parameters.Add(new SqlParameter("@firstName", instructor.FirstName));
+                        cmd.Parameters.Add(new SqlParameter("@lastName", instructor.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@slackHandle", instructor.SlackHandle));
+                        cmd.Parameters.Add(new SqlParameter("@specialty", instructor.Specialty));
+                        cmd.Parameters.Add(new SqlParameter("@cohortId", instructor.CohortId));
+
+                        var id = (int)cmd.ExecuteScalar();
+                        instructor.Id = id;
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
-            catch
+
+            catch (Exception ex)
             {
                 return View();
             }
@@ -133,6 +155,41 @@ namespace StudentExcercisesMVC2.Controllers
             catch
             {
                 return View();
+            }
+        }
+
+        private Instructor GetInstructorById(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Id, FirstName, LastName, CohortId, SlackHandle, Specialty FROM Instructor WHERE Id = @id";
+
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    var reader = cmd.ExecuteReader();
+                    Instructor instructor = null;
+
+                    while (reader.Read())
+                    {
+                        instructor = new Instructor()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                            SlackHandle = reader.GetString(reader.GetOrdinal("SlackHandle")),
+                            Specialty = reader.GetString(reader.GetOrdinal("Specialty")),
+                            CohortId = reader.GetInt32(reader.GetOrdinal("CohortId")),
+
+                        };
+
+                    }
+                    reader.Close();
+                    return instructor;
+                }
             }
         }
     }

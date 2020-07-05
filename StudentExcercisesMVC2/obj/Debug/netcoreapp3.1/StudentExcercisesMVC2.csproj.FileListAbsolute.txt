@@ -413,3 +413,6 @@ C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debu
 C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\StudentExcercisesMVC2.pdb
 C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\StudentExcercisesMVC2.genruntimeconfig.cache
 C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\Razor\Views\Instructors\Index.cshtml.g.cs
+C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\StudentExcercisesMVC2.csprojAssemblyReference.cache
+C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\Razor\Views\Instructors\Details.cshtml.g.cs
+C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\Razor\Views\Instructors\Create.cshtml.g.cs
