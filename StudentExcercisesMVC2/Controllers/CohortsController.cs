@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using StudentExcercisesMVC2.Models;
 
 namespace StudentExcercisesMVC2.Controllers
 {
@@ -30,6 +31,35 @@ namespace StudentExcercisesMVC2.Controllers
         // GET: CohortsController
         public ActionResult Index()
         {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Id, Name FROM Cohort";
+
+
+                        var reader = cmd.ExecuteReader();
+                        var cohorts = new List<Cohort>();
+
+                    while (reader.Read())
+                    {
+                        var cohort = new Cohort()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name"))
+                        };
+                        cohorts.Add(cohort);
+                    }
+
+                    reader.Close();
+                    return View(cohorts);
+                        }
+
+            }
+
+
+
             return View();
         }
 

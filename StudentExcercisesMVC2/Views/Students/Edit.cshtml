@@ -1,4 +1,4 @@
-﻿@model StudentExcercisesMVC2.Models.Student
+﻿@model StudentExcercisesMVC2.Models.ViewModels.StudentEditViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -34,7 +34,10 @@
             </div>
             <div class="form-group">
                 <label asp-for="CohortId" class="control-label"></label>
-                <input asp-for="CohortId" class="form-control" />
+                <select asp-for="CohortId" asp-items="@Model.CohortOptions" class="form-control"></select>
+                @*the line above say we want replace the input with a select box and options
+                are going to be what ever was in the viewmodel*@
+                @*<input asp-for="CohortId" class="form-control" />*@
                 <span asp-validation-for="CohortId" class="text-danger"></span>
             </div>
             <div class="form-group">
