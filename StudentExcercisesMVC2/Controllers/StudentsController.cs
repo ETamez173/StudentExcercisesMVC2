@@ -79,13 +79,18 @@ namespace StudentExcercisesMVC2.Controllers
         // GET: StudentsController/Create
         public ActionResult Create()
         {
-            return View();
+            var cohortOptions = GetCohortOptions();
+            var viewModel = new StudentEditViewModel()
+            {
+                CohortOptions = cohortOptions
+            };
+            return View(viewModel);
         }
 
         // POST: StudentsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Student student)
+        public ActionResult Create(StudentEditViewModel student)
         {
             try
             {
@@ -104,7 +109,7 @@ namespace StudentExcercisesMVC2.Controllers
                         cmd.Parameters.Add(new SqlParameter("@cohortId", student.CohortId));
 
                         var id = (int)cmd.ExecuteScalar();
-                        student.Id = id;
+                        student.StudentId = id;
 
                         return RedirectToAction(nameof(Index));
                     }
@@ -137,7 +142,7 @@ namespace StudentExcercisesMVC2.Controllers
         // POST: StudentsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Student student)
+        public ActionResult Edit(int id, StudentEditViewModel student)
         {
             try
             {
