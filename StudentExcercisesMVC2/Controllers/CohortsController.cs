@@ -59,10 +59,11 @@ namespace StudentExcercisesMVC2.Controllers
                 }
 
             }
-                       
+
         }
 
         // GET: CohortsController/Details/5
+        // this works
         public ActionResult Details(int id)
         {
             var cohort = GetCohortById(id);
@@ -72,19 +73,41 @@ namespace StudentExcercisesMVC2.Controllers
         // GET: CohortsController/Create
         public ActionResult Create()
         {
+            var cohortOptions = GetCohortOptions();
+            var viewModel = new CohortEditViewModel()
+            {
+
+            };
             return View();
         }
 
         // POST: CohortsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(CohortEditViewModel cohort)
+
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"INSERT INTO Cohort (Name)
+                                            OUTPUT INSERTED.Id
+                                            VALUES (@Name)";
+
+                        cmd.Parameters.Add(new SqlParameter("@name", cohort.Name));
+
+                        var id = (int)cmd.ExecuteScalar();
+                        cohort.CohortId = id;
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
-            catch
+            catch (Exception ex)
             {
                 return View();
             }
@@ -101,7 +124,7 @@ namespace StudentExcercisesMVC2.Controllers
                 Name = cohort.Name,
                 //CohortOptions = cohortOptions
             };
-            
+
             return View(viewModel);
         }
 
@@ -143,19 +166,33 @@ namespace StudentExcercisesMVC2.Controllers
         // GET: CohortsController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var cohort = GetCohortById(id);
+            return View(cohort);
         }
 
         // POST: CohortsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Cohort cohort)
         {
             try
             {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "DELETE FROM Cohort WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        cmd.ExecuteScalar();
+                    }
+                }
+
+
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
                 return View();
             }
@@ -210,7 +247,7 @@ namespace StudentExcercisesMVC2.Controllers
                         cohort = new Cohort()
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            Name = reader.GetString(reader.GetOrdinal("Name"))
                             //CohortId = reader.GetInt32(reader.GetOrdinal("CohortId")),
 
 

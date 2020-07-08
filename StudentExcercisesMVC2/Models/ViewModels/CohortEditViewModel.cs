@@ -9,16 +9,17 @@ namespace StudentExcercisesMVC2.Models.ViewModels
 {
     public class CohortEditViewModel
     {
-        [Display(Name = "Cohort")]
-        public int CohortId { get; set; }
+
 
         [Display(Name = "Name")]
-        [Required(ErrorMessage = "Cohort is required!")]
-        [MinLength(2, ErrorMessage = "Cohort should be at least 2 characters long")]
-
+        [Required(ErrorMessage = "Name is Required Dum! Dum!")]
+        [MinLength(3, ErrorMessage = "Name should have at least 3 characters Einstein!")]
         public string Name { get; set; }
 
-     
+
+        [Display(Name = "Cohort")]
+        //[Required]
+        public int CohortId { get; set; }
 
         public List<SelectListItem> CohortOptions { get; set; }
 
