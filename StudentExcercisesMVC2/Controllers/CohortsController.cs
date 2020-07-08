@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using StudentExcercisesMVC2.Models;
+using StudentExcercisesMVC2.Models.ViewModels;
 
 namespace StudentExcercisesMVC2.Controllers
 {
@@ -39,8 +41,8 @@ namespace StudentExcercisesMVC2.Controllers
                     cmd.CommandText = "SELECT Id, Name FROM Cohort";
 
 
-                        var reader = cmd.ExecuteReader();
-                        var cohorts = new List<Cohort>();
+                    var reader = cmd.ExecuteReader();
+                    var cohorts = new List<Cohort>();
 
                     while (reader.Read())
                     {
@@ -54,19 +56,17 @@ namespace StudentExcercisesMVC2.Controllers
 
                     reader.Close();
                     return View(cohorts);
-                        }
+                }
 
             }
-
-
-
-            return View();
+                       
         }
 
         // GET: CohortsController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var cohort = GetCohortById(id);
+            return View(cohort);
         }
 
         // GET: CohortsController/Create
@@ -93,16 +93,45 @@ namespace StudentExcercisesMVC2.Controllers
         // GET: CohortsController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var cohort = GetCohortById(id);
+            var cohortOptions = GetCohortOptions();
+            var viewModel = new CohortEditViewModel()
+            {
+                //CohortId = cohort.Id,
+                Name = cohort.Name,
+                //CohortOptions = cohortOptions
+            };
+            
+            return View(viewModel);
         }
 
         // POST: CohortsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, CohortEditViewModel cohort)
         {
             try
             {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE Cohort
+                                            SET Name = @name                                                
+                                            WHERE Id  = @id";
+
+                        cmd.Parameters.Add(new SqlParameter("@name", cohort.Name));
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        var rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected < 1)
+                        {
+                            return NotFound();
+                        }
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -131,5 +160,68 @@ namespace StudentExcercisesMVC2.Controllers
                 return View();
             }
         }
+
+        private List<SelectListItem> GetCohortOptions()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Id, Name FROM Cohort";
+
+                    var reader = cmd.ExecuteReader();
+                    var options = new List<SelectListItem>();
+
+                    while (reader.Read())
+                    {
+                        var option = new SelectListItem()
+                        {
+                            Text = reader.GetString(reader.GetOrdinal("Name")),
+                            Value = reader.GetInt32(reader.GetOrdinal("Id")).ToString()
+                        };
+                        options.Add(option);
+                    }
+                    reader.Close();
+                    return options;
+                }
+            }
+        }
+
+
+        private Cohort GetCohortById(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Id, Name FROM Cohort WHERE Id = @id";
+
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    var reader = cmd.ExecuteReader();
+                    Cohort cohort = null;
+
+                    if (reader.Read())
+                    {
+                        cohort = new Cohort()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            //CohortId = reader.GetInt32(reader.GetOrdinal("CohortId")),
+
+
+                        };
+
+                    }
+                    reader.Close();
+                    return cohort;
+                }
+            }
+        }
+
     }
 }
