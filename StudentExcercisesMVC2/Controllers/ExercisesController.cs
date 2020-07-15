@@ -155,19 +155,32 @@ namespace StudentExcercisesMVC2.Controllers
         // GET: ExercisesController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var exercise = GetExerciseById(id);
+            return View(exercise);
         }
 
         // POST: ExercisesController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Exercise exercise)
         {
             try
             {
+
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "DELETE FROM Exercise WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
                 return View();
             }
@@ -195,7 +208,7 @@ namespace StudentExcercisesMVC2.Controllers
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Name = reader.GetString(reader.GetOrdinal("Name")),
                             Language = reader.GetString(reader.GetOrdinal("Language")),
-                            
+
 
                         };
 
