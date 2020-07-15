@@ -423,3 +423,6 @@ C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debu
 C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\Razor\Views\Cohorts\Create.cshtml.g.cs
 C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\Razor\Views\Cohorts\Delete.cshtml.g.cs
 C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\Razor\Views\Students\Delete.cshtml.g.cs
+C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\Razor\Views\Exercises\Index.cshtml.g.cs
+C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\Razor\Views\Exercises\Details.cshtml.g.cs
+C:\Users\Owner\Source\Repos\StudentExcercisesMVC2\StudentExcercisesMVC2\obj\Debug\netcoreapp3.1\Razor\Views\Exercises\Edit.cshtml.g.cs
