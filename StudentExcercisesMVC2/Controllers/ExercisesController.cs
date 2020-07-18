@@ -73,19 +73,41 @@ namespace StudentExcercisesMVC2.Controllers
         // GET: ExercisesController/Create
         public ActionResult Create()
         {
-            return View();
+            var viewModel = new ExerciseEditViewModel();
+            {
+
+            };
+        
+            return View(viewModel);
         }
 
         // POST: ExercisesController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(ExerciseEditViewModel exercise)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"INSERT INTO Exercise (Name, Language)
+                                        OUTPUT INSERTED.Id
+                                        VALUES (@name, @language)";
+
+                        cmd.Parameters.Add(new SqlParameter("@name", exercise.Name));
+                        cmd.Parameters.Add(new SqlParameter("@language", exercise.Language));
+
+                        var id = (int)cmd.ExecuteScalar();
+                        exercise.ExerciseId = id;
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
-            catch
+            catch (Exception ex)
             {
                 return View();
             }
